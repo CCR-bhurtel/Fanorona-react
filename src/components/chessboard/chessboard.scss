@@ -1,10 +1,12 @@
 .Chessboard {
   position: relative;
-  width: 100vmin;
-  height:80vmin;
+  min-width: 100vmin;
+  min-height:70vmin;
   border-radius: 10px;
   box-shadow: 5px 5px 20px rgba(0,0,0,0.3);
-  background: white;
+  background: radial-gradient(circle, rgba(0, 0, 0, 1) 0%, rgba(255, 255, 255, 1) 100%)
+  
+;
   
   .boardImg {
     position: absolute;
@@ -14,6 +16,7 @@
     width: 750px;
     height: 420px;
 
+
     
   }
   .screenBox {
@@ -21,6 +24,7 @@
     z-index: 1;
     width: 688px;
     height: 382px;
+    
 
   }
   .chessBox {
@@ -30,5 +34,11 @@
       height: 50px;
       border-radius: 50%;
     }
+  }
+}
+
+@media(max-width:680px){
+  .Chessboard{
+    margin:20px
   }
 }
