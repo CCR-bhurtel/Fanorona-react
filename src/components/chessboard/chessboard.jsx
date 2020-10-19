@@ -2,13 +2,13 @@ import React from 'react'
 import cssObj from './chessboard.scss'
 import Chess from '../chess/chess'
 import Options from '../options/options'
+import WhoWin from '../WhoWin'
 const publicUrl = process.env.PUBLIC_URL
 
 class Chessboard extends React.Component {
   constructor() {
     super()
     this.state = {
-      // 棋盘棋子信息
       chessInfo: [],
       whoseTurn: 'white',
       usableList: [],
@@ -20,11 +20,11 @@ class Chessboard extends React.Component {
       forbidList: [],
       combo: false,
       eatable: true,
-      started: false
+      started: false,
+      time:0
     }
   }
   updateTurn () {
-    // 下一回合
     let { whoseTurn, chessInfo } = this.state
     whoseTurn = whoseTurn === 'black' ? 'white' : 'black'
     for (let y = 0;y < 5;y++) {
@@ -45,7 +45,6 @@ class Chessboard extends React.Component {
     })
   }
   startGame = () => {
-    // 开始游戏
     this.setState({
       chessInfo: this.initChessInfo(),
       whoseTurn: 'white',
@@ -65,7 +64,6 @@ class Chessboard extends React.Component {
     console.log(winner)
     const whoseTurn = winner ? winner : (this.state.whoseTurn === 'black' ? 'white' : 'black')
     console.log(whoseTurn)
-    // 游戏结束
     this.setState({
       chessInfo: [],
       blackNum: 0,
@@ -75,9 +73,13 @@ class Chessboard extends React.Component {
       eatable: true,
       forbidList: [],
       usableList: [],
-      combo: false
+      combo: false,
+       time:null
+
     }, () => {
-      alert(`${whoseTurn} win!!!`)
+    this.setState({time:2})
+    setTimeout(()=>this.setState({time:0}),4000)
+
     })
   }
   nextTurn = () => {
@@ -98,7 +100,7 @@ class Chessboard extends React.Component {
     this.updateTurn()
   }
   updateChessNum () {
-    // 更新对方棋子数，在吃掉对手棋子时更新
+   
     const state = this.state
     const whoseTurn = state.whoseTurn === 'black' ? 'white' : 'black'
     const chessInfo = state.chessInfo
@@ -110,13 +112,13 @@ class Chessboard extends React.Component {
     }
     if (!num) {
       this.gameOver(state.whoseTurn)
-      return void 0
+      return null
     }
     const key = whoseTurn === 'black' ? 'blackNum' : 'whiteNum'
     this.setState({ [key]: num })
   }
   updateActiveChess = info => {
-    // 更新当前被点击的棋子
+  
     const { chessInfo, activeChess } = this.state
     if (info.usable) {
       if (Object.keys(activeChess).length) {
@@ -131,17 +133,13 @@ class Chessboard extends React.Component {
         chessInfo,
         activeChess: { x, y }
       }, () => {
-        // 更新完点击棋子之后，需要获取该棋子可走路径
+      
         this.getPassablePos(info)
       })
     }
   }
   getPassablePos (info) {
-    // 获取当前点击棋子可走路径
-    // 获取所有空位，判断可移动棋子能否到达该空位
-    // 如果当前棋子的横坐标加上纵坐标为单数，则无法斜向行走
-    // 棋子无法在相同方向上连续走两步，无论是正向还是逆向
-    // 如果棋子移至当前空位不能消除棋子，或者该位置已经走过，返回
+   
     const { chessInfo, forbidList, eatable } = this.state
     const blankList = []
     for (let y = 0;y < 5;y++) {
@@ -161,7 +159,7 @@ class Chessboard extends React.Component {
         const lastForbid = forbidList[forbidList.length - 1]
         if ((lastForbid.x + bX) / 2 === x && (lastForbid.y + bY) / 2 === y) continue
       }
-      blank.passable = false // 先初始化为false
+      blank.passable = false 
       if ((x + y) % 2 === 0) {
         if (bX === x + 1 || bX === x - 1) {
           if (bY === y + 1 || bY === y - 1) {
@@ -181,17 +179,14 @@ class Chessboard extends React.Component {
     }
   }
   moveChess = (info, move = true, textChess) => {
-    // move参数表示是否移动棋子，如果为false，只检验棋子是否可以吃子，返回布尔值
-    // 当move为false时需要传入textChess测试棋子替代activeChess
+   
     const { chessInfo, whoseTurn, activeChess } = this.state
     const { x, y } = info
     const { x: actX, y: actY } = move ? activeChess : textChess
     const differX = x - actX
     const differY = y - actY
     const actChess = chessInfo[actY][actX]
-    // 将玩家当前使用的棋子移动到被点击的空位
-    // 吃子后计算对方玩家棋子数量
-    // 将所有可用棋子状态重置
+    
     if (move) {
       info.passable = false
       info.player = whoseTurn
@@ -205,15 +200,14 @@ class Chessboard extends React.Component {
       }
       this.setState({ chessInfo })
     }
-    // 检测棋子移动方向或相反方向上有无对方玩家棋子，如果有，清除对方玩家棋子
-    // 对手
+    
     const opponent = whoseTurn === 'black' ? 'white' : 'black'
-    // 前后棋子坐标
+
     const frontX = x + differX
     const frontY = y + differY
     const afterX = actX - differX
     const afterY = actY - differY
-    // 前后棋子是否存在，存在棋子时，判断棋子是否为对方棋子
+   
     let haveFront = false
     let haveAfter = false
     this.judgeChessSave(frontX, frontY)
@@ -222,9 +216,9 @@ class Chessboard extends React.Component {
     this.judgeChessSave(afterX, afterY)
       && chessInfo[afterY][afterX].player === opponent
       && (haveAfter = true)
-    // 如果不是真正的对棋子进行移动，只是检测是否有可吃棋子，返回
+  
     if (!move) return haveFront || haveAfter
-    // 获取前后对方棋子列表
+  
     let frontList = []
     let afterList = []
     if (haveFront) {
@@ -243,11 +237,8 @@ class Chessboard extends React.Component {
         { x: actX, y: actY }
       )
     }
-    /**
-     * 如果只有一个方向有对方棋子，那么直接去掉对方棋子
-     * 如果两个方向都有，需要先等待玩家选择吃子方向
-     * 如果都没有，直接到下一回合
-     */
+   
+    
     if (haveFront && haveAfter) {
       const removeList = [...frontList, ...afterList]
       removeList.forEach(item => {
@@ -519,6 +510,7 @@ class Chessboard extends React.Component {
     const { started, chessInfo, combo } = this.state
     return (
       <div className="flex flex-ai flex-jcc flex-clo">
+      {this.state.time && <WhoWin name={this.state.whoseTurn} />}
         <Options startGame={this.startGame} started={started} combo={combo} gameOver={this.gameOver} nextTurn={this.nextTurn}></Options>
         <div className={`${cssObj.Chessboard} flex flex-ai flex-jcc`}>
           <img className={cssObj.boardImg} src={`${publicUrl}/chessboard.svg`} alt="" />

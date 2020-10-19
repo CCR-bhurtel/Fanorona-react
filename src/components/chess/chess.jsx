@@ -24,7 +24,6 @@ class Chess extends React.Component {
     this.setState({ isHover: false })
   }
   render () {
-    // 判断是黑棋还是白棋
     const chess = this.props.chessInfo
     const isHover = this.state.isHover
     const chessUrl = process.env.PUBLIC_URL + (chess.player === 'black' ? '/black.svg' : '/white.svg')

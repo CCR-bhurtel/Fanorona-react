@@ -2,8 +2,9 @@
   position: relative;
   width: 790px;
   height: 470px;
-  background-color: #fff;
   border-radius: 10px;
+  box-shadow: 5px 5px 20px rgba(0,0,0,0.3);
+  
   .boardImg {
     position: absolute;
     transform: translate(-50%, -50%);
@@ -11,12 +12,15 @@
     left: 50%;
     width: 750px;
     height: 420px;
+
+    
   }
   .screenBox {
     position: absolute;
     z-index: 1;
     width: 688px;
     height: 382px;
+
   }
   .chessBox {
     cursor: pointer;
