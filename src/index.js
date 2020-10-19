@@ -2,11 +2,12 @@ import React from "react";
 import ReactDOM from "react-dom";
 import "./index.css";
 import Chessboard from "./components/chessboard/chessboard";
+import * as M from "materialize-css";
 
 import * as serviceWorker from "./serviceWorker";
 
+M.AutoInit();
 serviceWorker.unregister();
-// 模块热替换
 if (module.hot) {
   module.hot.accept();
 }

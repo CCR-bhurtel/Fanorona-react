@@ -3,6 +3,7 @@ import cssObj from './chessboard.scss'
 import Chess from '../chess/chess'
 import Options from '../options/options'
 import WhoWin from '../WhoWin'
+import Restart from '../Restart'
 const publicUrl = process.env.PUBLIC_URL
 
 class Chessboard extends React.Component {
@@ -78,7 +79,7 @@ class Chessboard extends React.Component {
 
     }, () => {
     this.setState({time:2})
-    setTimeout(()=>this.setState({time:0}),4000)
+    setTimeout(()=>this.setState({time:0}),2000)
 
     })
   }
@@ -185,7 +186,7 @@ class Chessboard extends React.Component {
     const { x: actX, y: actY } = move ? activeChess : textChess
     const differX = x - actX
     const differY = y - actY
-    const actChess = chessInfo[actY][actX]
+    const actChess = chessInfo[actY][actX] || null
     
     if (move) {
       info.passable = false
@@ -270,12 +271,7 @@ class Chessboard extends React.Component {
     }
   }
   judgeCombo (chess, forbidChess) {
-    /**
-     * 判断该棋子是否可以连击
-     * 当棋子走完一步后触发
-     * 判断棋子周围是否有其他空位，不包含禁止通行的空位
-     * 棋子移动至空位是否可以吃子
-     */
+
     const chessInfo = this.state.chessInfo
     const { x: currentX, y: currentY } = chess
     const roundPos = [] // 存放棋子周围8个位置的坐标
@@ -510,7 +506,8 @@ class Chessboard extends React.Component {
     const { started, chessInfo, combo } = this.state
     return (
       <div className="flex flex-ai flex-jcc flex-clo">
-     {this.state.time && <WhoWin name={this.state.whoseTurn} />}
+    <Restart/>
+     {this.state.time ? <WhoWin name={this.state.whoseTurn} /> : null}
         <Options startGame={this.startGame} started={started} combo={combo} gameOver={this.gameOver} nextTurn={this.nextTurn}></Options>
         <div className={`${cssObj.Chessboard} flex flex-ai flex-jcc`}>
           <img className={cssObj.boardImg} src={`${publicUrl}/chessboard.svg`} alt="" />

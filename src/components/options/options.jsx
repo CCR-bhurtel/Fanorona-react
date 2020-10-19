@@ -12,7 +12,8 @@ class Options extends React.Component {
         {started && <button className="btn waves-effect waves-light   red "   onClick={() => gameOver()}>Give up</button>}
         {combo && <button className="btn waves-effect waves-light green"  onClick={nextTurn}>Next turn</button>}
         {!started && <button className="btn waves-effect waves-light blue lighten-3"  onClick={startGame}>Start!</button>}
-        {started && <button className="btn waves-effect waves-light blue lighten-3"  onClick={startGame}>Restart</button>}
+        {started &&  <a  href="#Modal1" onClick={startGame}><button className="btn waves-effect waves-light blue" >
+         Restart</button></a>}
       </div>
     )
   }
