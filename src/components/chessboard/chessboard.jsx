@@ -510,7 +510,7 @@ class Chessboard extends React.Component {
     const { started, chessInfo, combo } = this.state
     return (
       <div className="flex flex-ai flex-jcc flex-clo">
-      {this.state.time && <WhoWin name={this.state.whoseTurn} />}
+     {this.state.time && <WhoWin name={this.state.whoseTurn} />}
         <Options startGame={this.startGame} started={started} combo={combo} gameOver={this.gameOver} nextTurn={this.nextTurn}></Options>
         <div className={`${cssObj.Chessboard} flex flex-ai flex-jcc`}>
           <img className={cssObj.boardImg} src={`${publicUrl}/chessboard.svg`} alt="" />
